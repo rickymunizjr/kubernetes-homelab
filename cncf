@@ -1,0 +1,94 @@
+# CNCF Project Ideas for Kubernetes Homelab
+
+This document lists [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) projects that could be added to this homelab to enhance its capabilities.
+
+## Currently Deployed CNCF Projects
+
+| Project | Category | Status |
+|---------|----------|--------|
+| [Kubernetes](https://kubernetes.io/) | Orchestration | Graduated |
+| [Argo CD](https://argo-cd.readthedocs.io/) | GitOps / CD | Graduated |
+| [Prometheus](https://prometheus.io/) | Monitoring | Graduated |
+| [Grafana](https://grafana.com/) | Visualization | Graduated |
+
+---
+
+## Suggested Additions
+
+### Security
+
+- **[Cert-Manager](https://cert-manager.io/)** *(Graduated)*
+  Automates the provisioning and renewal of TLS certificates from Let's Encrypt or a private CA. Replaces manual certificate management for all ingress hosts (`pgadmin`, `code-server`, `excalidraw`, etc.).
+
+- **[Falco](https://falco.org/)** *(Graduated)*
+  Runtime security tool that detects anomalous behavior inside containers by monitoring syscalls. Useful for detecting unexpected activity in cluster workloads.
+
+- **[OPA Gatekeeper](https://open-policy-agent.github.io/gatekeeper/)** *(Graduated)*
+  Policy enforcement for Kubernetes using Open Policy Agent. Allows defining admission-control policies to prevent misconfigurations (e.g., requiring resource limits, disallowing privileged containers).
+
+### Observability
+
+- **[OpenTelemetry Collector](https://opentelemetry.io/)** *(Incubating)*
+  Vendor-agnostic agent for collecting, processing, and exporting traces, metrics, and logs. Centralizes telemetry from all homelab services into the existing Prometheus/Grafana stack.
+
+- **[Jaeger](https://www.jaegertracing.io/)** *(Graduated)*
+  Distributed tracing platform. Works well alongside OpenTelemetry to visualize request flows across multiple services (e.g., n8n workflows, code-server).
+
+- **[Loki](https://grafana.com/oss/loki/)** (CNCF Sandbox via Grafana)
+  Log aggregation system designed to integrate natively with Grafana. Provides a single pane of glass for logs, metrics, and traces within the existing Grafana dashboards.
+
+### Storage
+
+- **[Longhorn](https://longhorn.io/)** *(Graduated)*
+  Cloud-native distributed block storage for Kubernetes. Provides replicated persistent volumes backed by local node storage — ideal for stateful workloads like pgAdmin's PostgreSQL or n8n's SQLite/Postgres backend.
+
+- **[Rook](https://rook.io/)** *(Graduated)*
+  Orchestrates Ceph storage on Kubernetes. A heavier alternative to Longhorn, suitable if the homelab has multiple nodes and requires object storage (S3-compatible) in addition to block storage.
+
+### Networking
+
+- **[Cilium](https://cilium.io/)** *(Graduated)*
+  eBPF-based networking, observability, and security for Kubernetes. Can replace the existing CNI plugin to gain network policy enforcement, Hubble network visibility, and reduced iptables overhead.
+
+- **[MetalLB](https://metallb.universe.tf/)** (CNCF Sandbox)
+  Bare-metal load-balancer implementation for Kubernetes. Provides proper `LoadBalancer` service support on bare-metal nodes, removing the need for external load-balancer infrastructure.
+
+### Backup & Disaster Recovery
+
+- **[Velero](https://velero.io/)** *(Incubating)*
+  Backs up and restores Kubernetes cluster resources and persistent volumes. Critical for protecting homelab state (ArgoCD configuration, persistent data) against accidental deletion or node failure.
+
+### Registry
+
+- **[Harbor](https://goharbor.io/)** *(Graduated)*
+  Self-hosted container registry with vulnerability scanning (via Trivy), RBAC, and replication. Enables hosting private images locally instead of relying on Docker Hub or external registries.
+
+### Autoscaling & Eventing
+
+- **[KEDA](https://keda.sh/)** *(Graduated)*
+  Kubernetes Event-Driven Autoscaling. Scales workloads based on external event sources (cron, queues, HTTP traffic). Useful for scaling n8n workers or other batch workloads on demand.
+
+### GitOps / Infrastructure as Code
+
+- **[Crossplane](https://www.crossplane.io/)** *(Graduated)*
+  Manages external infrastructure (cloud resources, databases, DNS) as Kubernetes custom resources. Could manage external dependencies of this homelab declaratively alongside ArgoCD.
+
+---
+
+## Priority Recommendations
+
+For an initial expansion of this homelab, the following projects offer the highest value-to-effort ratio:
+
+1. **Cert-Manager** — Immediately solves TLS certificate management for all existing ingress hosts.
+2. **Longhorn** — Provides reliable persistent storage for stateful applications.
+3. **Velero** — Protects the cluster state and persistent data with scheduled backups.
+4. **Loki** — Extends the existing Prometheus/Grafana monitoring stack with log aggregation.
+5. **Falco** — Adds runtime security monitoring with minimal configuration overhead.
+
+---
+
+## Resources
+
+- [CNCF Landscape](https://landscape.cncf.io/)
+- [CNCF Project Maturity Levels](https://www.cncf.io/projects/)
+- [Artifact Hub](https://artifacthub.io/) — Helm charts for all CNCF projects
